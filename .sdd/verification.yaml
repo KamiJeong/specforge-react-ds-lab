@@ -1,0 +1,14 @@
+version: 1
+description: Project-owned mechanical checks executed by sdd-verify.
+commands: []
+
+# Add project commands in execution order. Example:
+# commands:
+#   - id: format-check
+#     command: ./project-specific-format-check
+#     required: true
+#     timeout_seconds: 300
+#   - id: test
+#     command: ./project-specific-test-command
+#     required: true
+#     timeout_seconds: 900

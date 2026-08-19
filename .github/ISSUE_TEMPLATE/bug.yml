@@ -1,0 +1,58 @@
+name: Bug
+description: Report observable incorrect behavior with enough context to design a regression Eval.
+title: "[Bug]: "
+labels:
+  - "type:bug"
+  - "stage:intake"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include secrets or private vulnerability details. Follow SECURITY.md for vulnerability disclosure.
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current Behavior
+      description: What did you observe?
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      description: Provide the smallest reliable sequence you know.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Who or what is affected, and how severely?
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Versions, deployment, device, browser, operating system, or other relevant context.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs / Screenshots / Existing Evidence
+      description: Redact secrets and personal or sensitive data.
+  - type: textarea
+    id: regression
+    attributes:
+      label: Regression Information
+      description: Did this work before? If known, when or where did it change?

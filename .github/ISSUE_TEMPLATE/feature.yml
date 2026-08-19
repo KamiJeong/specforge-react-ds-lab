@@ -1,0 +1,52 @@
+name: Feature
+description: Describe a problem and desired outcome. SpecForge will derive the detailed specification.
+title: "[Feature]: "
+labels:
+  - "type:feature"
+  - "stage:intake"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share raw context, not a full specification. The SDD workflow will clarify requirements and evaluation.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem exists, and who experiences it?
+      placeholder: Describe the current pain or missed outcome.
+    validations:
+      required: true
+  - type: textarea
+    id: desired-outcome
+    attributes:
+      label: Desired Outcome
+      description: What should be possible or meaningfully better?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Background / Context
+      description: Add relevant history, links, examples, or related work.
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Known Constraints
+      description: Include dates, compatibility, policy, technical, or operational constraints already known.
+  - type: textarea
+    id: non-goals
+    attributes:
+      label: Non-Goals
+      description: What should this work explicitly avoid or defer?
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - P2 — Normal
+        - P1 — High
+        - P0 — Critical / release blocker
+        - P3 — Low
+    validations:
+      required: true

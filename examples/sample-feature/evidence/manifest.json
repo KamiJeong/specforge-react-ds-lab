@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "retention": "committed example text output",
+  "evidence": [
+    {
+      "id": "EVIDENCE-42-001",
+      "eval_id": "EVAL-42-001",
+      "type": "command",
+      "source": "local bootstrap execution of both EVAL-42-001 commands",
+      "command": "examples/sample-feature/implementation/normalize.sh 'Hello, Spec Forge!' && examples/sample-feature/implementation/normalize.sh '  Already---Slugged  '",
+      "procedure": "Execute both inputs in Eval Contract order and retain stdout.",
+      "exit_code": 0,
+      "result": "PASS",
+      "artifact_path": "evidence/eval-42-001.txt",
+      "repository_revision": null,
+      "timestamp": "2026-08-19T05:17:18Z",
+      "captured_by": "process:specforge-example-validation",
+      "notes": "Repository had no commit yet, so no revision was available."
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+hello-spec-forge
+already-slugged

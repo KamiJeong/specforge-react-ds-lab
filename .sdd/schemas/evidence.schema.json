@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specforge.dev/schemas/evidence.schema.json",
+  "title": "SpecForge Eval Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "eval_id", "type", "source", "result", "timestamp", "captured_by"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^EVIDENCE-(?:[0-9]+|LOCAL-[A-F0-9]{12})-[0-9]{3,}$"},
+    "eval_id": {"type": "string", "pattern": "^EVAL-(?:[0-9]+|LOCAL-[A-F0-9]{12})-[0-9]{3,}$"},
+    "type": {"enum": ["command", "test-output", "api-response", "database-assertion", "browser-observation", "screenshot", "network-trace", "console-output", "performance-measurement", "accessibility-result", "security-result", "generated-artifact", "human-observation"]},
+    "source": {"type": "string", "minLength": 1},
+    "command": {"type": ["string", "null"]},
+    "procedure": {"type": ["string", "null"]},
+    "exit_code": {"type": ["integer", "null"]},
+    "result": {"enum": ["PASS", "FAIL", "BLOCKED", "NOT_APPLICABLE"]},
+    "artifact_path": {"type": ["string", "null"]},
+    "repository_revision": {"type": ["string", "null"]},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "captured_by": {"type": "string", "pattern": "^(specforge-[a-z-]+/v[0-9]+|human:[A-Za-z0-9._-]+|process:[A-Za-z0-9._-]+)$"},
+    "notes": {"type": ["string", "null"]}
+  }
+}

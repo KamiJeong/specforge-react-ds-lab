@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specforge.dev/schemas/eval-result.schema.json",
+  "title": "SpecForge Eval Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["eval_id", "verdict", "evidence_ids", "evaluated_by", "evaluated_at"],
+  "properties": {
+    "eval_id": {"type": "string", "pattern": "^EVAL-(?:[0-9]+|LOCAL-[A-F0-9]{12})-[0-9]{3,}$"},
+    "verdict": {"enum": ["PASS", "FAIL", "BLOCKED", "NOT_APPLICABLE"]},
+    "evidence_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^EVIDENCE-(?:[0-9]+|LOCAL-[A-F0-9]{12})-[0-9]{3,}$"}},
+    "explanation": {"type": ["string", "null"]},
+    "evaluated_by": {"type": "string", "pattern": "^(specforge-evaluator/v[0-9]+|human:[A-Za-z0-9._-]+|process:[A-Za-z0-9._-]+)$"},
+    "evaluated_at": {"type": "string", "format": "date-time"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"verdict": {"enum": ["BLOCKED", "NOT_APPLICABLE"]}}},
+      "then": {"required": ["explanation"], "properties": {"explanation": {"type": "string", "minLength": 1}}}
+    },
+    {
+      "if": {"properties": {"verdict": {"const": "PASS"}}},
+      "then": {"properties": {"evidence_ids": {"minItems": 1}}}
+    }
+  ]
+}

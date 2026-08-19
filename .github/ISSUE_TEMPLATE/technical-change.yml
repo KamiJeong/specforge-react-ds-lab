@@ -1,0 +1,57 @@
+name: Technical Change
+description: Propose refactoring, tech debt, performance, infrastructure, dependency, or architecture work.
+title: "[Technical]: "
+labels:
+  - "type:refactor"
+  - "stage:intake"
+body:
+  - type: dropdown
+    id: change-type
+    attributes:
+      label: Change Type
+      description: Intake will normalize the type label if the default refactor label is not appropriate.
+      options:
+        - Refactor
+        - Tech Debt
+        - Performance
+        - Infrastructure
+        - Dependency Upgrade
+        - Architecture Change
+    validations:
+      required: true
+  - type: textarea
+    id: current-problem
+    attributes:
+      label: Current Technical Problem
+      description: What makes the current state unsafe, expensive, slow, brittle, or difficult?
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What technical outcome should this change achieve?
+    validations:
+      required: true
+  - type: textarea
+    id: preserved-behavior
+    attributes:
+      label: Behavior That Must Be Preserved
+      description: List user, API, data, operational, or compatibility contracts that must not change.
+    validations:
+      required: true
+  - type: textarea
+    id: affected-areas
+    attributes:
+      label: Affected Areas
+      description: Known components, integrations, teams, or deployment surfaces.
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Technical Constraints
+      description: Include compatibility, migration, dependency, deployment, or policy limits.
+  - type: textarea
+    id: risks
+    attributes:
+      label: Known Risks
+      description: Include security, data, API, migration, performance, accessibility, or rollback risks.

@@ -1,0 +1,21 @@
+version: 1
+description: Project-owned retention policy for Eval Evidence artifacts.
+
+manifest:
+  commit: true
+
+artifacts:
+  default: metadata-only
+  commit_text_under_bytes: 65536
+  commit_binary: false
+  external_store: null
+
+redaction:
+  required: true
+  prohibited_content:
+    - credentials
+    - secrets
+    - unredacted sensitive personal data
+
+# Projects may change artifact retention deliberately. A metadata-only policy
+# does not permit claiming evidence that was never observed or cannot be located.

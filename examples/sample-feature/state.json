@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "issue": 42,
+  "correlation_id": "42",
+  "slug": "slug-normalizer-sample",
+  "branch": null,
+  "current_stage": "review",
+  "completed_stages": [
+    "intake",
+    "spec",
+    "clarify",
+    "eval-design",
+    "plan",
+    "tasks",
+    "analyze",
+    "implement",
+    "verify",
+    "eval"
+  ],
+  "blocked_stage": "review",
+  "manual_decisions": [],
+  "assumptions": [],
+  "spec_status": "approved",
+  "eval_design_status": "approved",
+  "analysis_status": "pass",
+  "implementation_status": "complete",
+  "verification_status": "pass",
+  "eval_status": "pass",
+  "review_iteration": 0,
+  "open_findings": [],
+  "convergence_status": "not_started",
+  "updated_at": "2026-08-19T05:17:18Z"
+}

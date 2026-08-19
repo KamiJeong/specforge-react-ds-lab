@@ -1,0 +1,47 @@
+name: Spike
+description: Request a bounded investigation that produces evidence for a decision rather than assumed production code.
+title: "[Spike]: "
+labels:
+  - "type:spike"
+  - "stage:intake"
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What decision-relevant question should this investigation answer?
+    validations:
+      required: true
+  - type: textarea
+    id: unknowns
+    attributes:
+      label: Unknowns
+      description: What is currently uncertain?
+    validations:
+      required: true
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis
+      description: What do you currently expect, if anything?
+  - type: textarea
+    id: expected-evidence
+    attributes:
+      label: Expected Evidence
+      description: What observations, measurements, prototype, or source analysis would answer the question?
+    validations:
+      required: true
+  - type: textarea
+    id: enabled-decision
+    attributes:
+      label: Decision This Investigation Should Enable
+      description: What choice becomes possible when enough evidence exists?
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Scope Boundary
+      description: What should the spike not build or decide?
+    validations:
+      required: true

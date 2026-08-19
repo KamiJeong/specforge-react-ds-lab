@@ -1,0 +1,162 @@
+version: 1
+name: SpecForge V1
+state_schema: .sdd/schemas/workflow-state.schema.json
+initial_stage: intake
+terminal_stage: ready-pr
+review_iteration_limit: 2
+state_authority: specs/<correlation>-<slug>/state.json
+
+orchestrator:
+  model: gpt-5.6-sol
+  reasoning: high
+  actor: specforge-orchestrator/v1
+
+stages:
+  intake:
+    skill: sdd-intake
+    agent: architect
+    artifact: issue.md
+    pass_to: spec
+  spec:
+    skill: sdd-spec
+    agent: architect
+    artifact: spec.md
+    pass_to: clarify
+  clarify:
+    skill: sdd-clarify
+    agent: architect
+    artifact: clarifications.md
+    pass_to: eval-design
+  eval-design:
+    skill: sdd-eval-design
+    agent: architect
+    artifact: evals.md
+    pass_to: plan
+  plan:
+    skill: sdd-plan
+    agent: architect
+    artifact: plan.md
+    pass_to: tasks
+  tasks:
+    skill: sdd-tasks
+    agent: architect
+    artifact: tasks.md
+    pass_to: analyze
+    exit_checks: [knowledge-validate]
+  analyze:
+    skill: sdd-analyze
+    agent: architect
+    artifact: analysis.md
+    read_only: true
+    pass_to: implement
+  implement:
+    skill: sdd-implement
+    agent: implementer
+    pass_to: verify
+  verify:
+    skill: sdd-verify
+    agent: evaluator
+    artifact: verification.md
+    pass_to: eval
+  eval:
+    skill: sdd-eval
+    agent: evaluator
+    artifacts: [eval-results.md, evidence/manifest.json]
+    pass_to: review
+  review:
+    skill: sdd-review
+    agent: reviewer
+    artifact: review.md
+    read_only_agent: true
+    pass_to: converge
+    fail_to: fix
+  fix:
+    skill: sdd-fix
+    agent: fixer
+    pass_to: verify
+  converge:
+    skill: sdd-converge
+    agent: architect
+    artifact: convergence.md
+    pass_to: ready-pr
+    entry_checks: [knowledge-validate]
+  ready-pr:
+    skill: sdd-pr
+    agent: utility
+    terminal: true
+    entry_checks: [knowledge-validate, definition-of-done]
+
+allowed_transitions:
+  intake: [spec]
+  spec: [clarify]
+  clarify: [spec, eval-design]
+  eval-design: [clarify, spec, plan]
+  plan: [clarify, spec, eval-design, tasks]
+  tasks: [clarify, spec, eval-design, plan, analyze]
+  analyze: [clarify, spec, eval-design, plan, tasks, implement]
+  implement: [clarify, spec, eval-design, plan, tasks, verify]
+  verify: [implement, fix, eval]
+  eval: [implement, fix, eval-design, review]
+  review: [fix, converge]
+  fix: [clarify, spec, eval-design, plan, tasks, verify]
+  converge: [clarify, spec, eval-design, plan, tasks, implement, verify, eval, review, fix, ready-pr]
+  ready-pr: []
+
+blocking_conditions:
+  global:
+    - invalid or unparseable state
+    - unresolved authority conflict
+    - required human decision
+    - fabricated or insufficient evidence
+  analyze:
+    - any blocking analysis finding
+  verify:
+    - any required verification command fails or is not executed
+  eval:
+    - any blocking Eval is FAIL or BLOCKED
+  review:
+    - any open P0 or P1 finding
+  converge:
+    - any Definition of Done condition is unsatisfied
+
+human_gates:
+  labels: [gate:human-required, state:blocked, state:needs-info]
+  decisions:
+    - business behavior or product semantics
+    - authentication, authorization, or security boundary
+    - sensitive data handling
+    - public API contract change
+    - irreversible migration
+    - significant infrastructure cost
+    - Constitution exception
+    - intentional Acceptance Criteria weakening
+    - intentional blocking Eval change
+
+retry_behavior:
+  verification_failure: route to implement or fix according to review history
+  eval_failure: route to implement or fix; use eval-design only for a recorded contract defect
+  review_failure: route to fix, then verify, eval, and review
+  review_fix_limit: 2
+  on_limit: persist blocking question, apply gate:human-required, and stop
+
+knowledge_validation_checkpoints:
+  - after intake, spec, clarify, eval-design, plan, and tasks artifact generation
+  - during analyze when useful
+  - before converge
+  - before ready-pr
+
+spike_route:
+  stages: [intake, clarify, eval-design, analyze, converge, ready-pr]
+  notes: Investigation evidence replaces production implementation unless the approved spike explicitly includes code.
+
+pr_readiness_conditions:
+  - spec_status is approved
+  - eval_design_status is approved
+  - analysis_status is pass
+  - implementation_status is complete, or the approved issue type is spike
+  - verification_status is pass, or explicitly not applicable for an approved spike
+  - eval_status is pass
+  - open P0 findings equals 0
+  - open P1 findings equals 0
+  - convergence_status is pass
+  - final knowledge validation passes
