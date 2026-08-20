@@ -77,32 +77,46 @@ database.
 
 ## One command, several narrow capabilities
 
-`$sdd-run` is the Orchestrator entry point. The primary Codex session reads
-policy and state, chooses the current stage Skill, delegates to the appropriate
-Custom Agent, enforces gates, persists results, repairs GitHub label drift, and
-resumes until it must stop or can create a PR.
+`$sdd-run` is the Orchestrator entry point. The primary Codex session selects
+and persists a Quick, Component, or Full profile, delegates to the appropriate
+Skill and Custom Agent, enforces profile-specific gates, persists results,
+repairs GitHub label drift, and resumes until it must stop or can create a PR.
 
 Workflow stages are Skills under `.agents/skills/`. Execution capabilities are
 Custom Agents under `.codex/agents/`. They are deliberately different:
 
 | Capability | Default model | Reasoning | Typical work |
 | --- | --- | --- | --- |
-| Orchestrator | `gpt-5.6-sol` | high | state, gates, routing, convergence |
-| Architect | `gpt-5.6-sol` | high | Spec, Eval design, Plan, Analyze |
+| Orchestrator | `gpt-5.6-terra` | medium | profile, state, gates, routing |
+| Architect | `gpt-5.6-terra` | medium | Brief or full architecture artifacts |
 | Explorer | `gpt-5.6-terra` | medium | read-only repository discovery |
-| Implementer | `gpt-5.6-terra` | high | approved Tasks and tests |
-| Evaluator | `gpt-5.6-terra` | high | Verify, Eval, evidence |
-| Reviewer | `gpt-5.6-sol` | high | independent read-only review |
-| Fixer | `gpt-5.6-terra` | high | approved finding remediation |
+| Implementer | `gpt-5.6-terra` | medium | approved Tasks and tests |
+| Evaluator | `gpt-5.6-terra` | medium | targeted/full Verify, Eval, evidence |
+| Reviewer | `gpt-5.6-terra` | medium | profile-scoped independent review |
+| Fixer | `gpt-5.6-terra` | medium | approved finding remediation |
 | Utility | `gpt-5.6-luna` | low | deterministic metadata work |
 
-These are routing defaults. The Orchestrator escalates ambiguity, architecture,
-security boundaries, data integrity, public contracts, complex failure analysis,
-critical Eval design, review adjudication, and convergence to Sol/high.
+These are routing defaults. The Orchestrator escalates only bounded unresolved
+security/data/migration, externally published API, high-impact architecture,
+critical performance/cost, complex failure, or disputed P0/P1 decisions to
+Sol/high.
 
 ## The workflow and its gates
 
-The normal path is:
+The default for shared design-system work is Component:
+
+```text
+Brief → Implement → Targeted Verify → Eval
+      → Independent Review → Pull Request
+```
+
+Quick omits the separate Eval stage when targeted Verification is sufficient:
+
+```text
+Brief → Implement → Targeted Verify → Independent Review → Pull Request
+```
+
+Full retains the complete path:
 
 ```text
 Intake → Spec → Clarify → Eval Design → Plan → Tasks
@@ -117,7 +131,8 @@ Eval→Fix→Verify→Eval for a failure, and Review→Fix→Verify→Eval→Rev
 
 Knowledge validation is a required checkpoint rather than a GitHub stage. This
 intentional deviation keeps the requested `stage:*` label taxonomy concise while
-still enforcing OKF checks after artifact generation and before convergence/PR.
+still enforcing OKF checks. Compact profiles run it after `brief.md` and before
+PR; Full keeps its major-artifact, Convergence, and PR checkpoints.
 
 ### AUTO and MANUAL clarification
 
@@ -237,6 +252,10 @@ commands:
 
 Only commands actually executed may appear as successful evidence. Keep secrets
 out of commands and retained output.
+
+Commands may declare profile applicability. Use targeted package/component
+checks for Quick/Component during the loop and full commands for Full or final
+CI. Leave the list empty until real React workspace scripts exist.
 
 ## Validate this harness
 

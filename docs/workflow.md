@@ -1,5 +1,22 @@
 # Workflow
 
+## Delivery profiles
+
+SpecForge selects exactly one persisted profile. Explicit `--profile` wins,
+then a single `workflow:*` label, then automatic classification.
+
+| Profile | Route | Use when |
+| --- | --- | --- |
+| Quick | Brief → Implement → Targeted Verify → Review → Ready PR | Low-risk, local, reversible changes |
+| Component | Brief → Implement → Targeted Verify → Eval → Review → Ready PR | Shared UI components with API, state, interaction, visual, and accessibility contracts |
+| Full | Existing thirteen-stage route | Security/data/migration, external APIs, cross-boundary architecture, critical performance/cost, or unresolved semantics |
+
+Quick and Component combine Intake, Specification, Clarification, Eval intent,
+Plan, Tasks, and Analyze into one `brief.md`. They persist observed checks,
+review, residual risk, and rollback in `delivery.md`. Knowledge validation runs
+after the Brief and before Ready PR. A discovered Full-risk condition promotes
+the workflow before further implementation.
+
 ## State machine
 
 The normal implementation route is:
@@ -50,7 +67,7 @@ Unknown and undeclared edges fail.
 
 ## Transition transaction
 
-Every forward or backward transition uses the same order:
+Every forward or backward transition uses the same persistence order:
 
 1. Execute the active stage.
 2. Validate output and gate result.
@@ -81,10 +98,11 @@ SpecForge persists a human gate and stops.
 
 ## Definition of Done
 
-PR readiness requires approved Spec and Eval Design, resolved clarification,
-valid Plan/Tasks, passing knowledge and Analyze gates, completed implementation
-or an approved Spike exception, passing Verification, all blocking Evals PASS
-with evidence, zero P0/P1, passing Convergence, and final OKF validation.
+PR readiness always requires completed implementation or an approved Spike
+exception, passing profile-appropriate Verification, zero P0/P1, no open human
+decision, and final knowledge validation. Component additionally requires its
+blocking Evals PASS. Full additionally requires approved Eval Design, passing
+Analyze/Eval/Convergence, and the existing complete artifact chain.
 
 ## Spike route
 

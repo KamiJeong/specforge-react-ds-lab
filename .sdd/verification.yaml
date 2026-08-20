@@ -2,6 +2,21 @@ version: 1
 description: Project-owned mechanical checks executed by sdd-verify.
 commands: []
 
+profiles:
+  quick:
+    scope: targeted
+    description: Run only changed-package or Brief-approved checks during the compact loop.
+  component:
+    scope: targeted
+    description: Run component-focused lint, typecheck, tests, and interaction/accessibility checks when configured.
+  full:
+    scope: full
+    description: Run every required project check in declared order.
+
+# Keep commands empty until the application and package-manager scripts exist.
+# Never infer a successful command. When the React workspace is initialized,
+# add project-native commands and optionally a profiles list to each command.
+
 # Add project commands in execution order. Example:
 # commands:
 #   - id: format-check
@@ -12,3 +27,4 @@ commands: []
 #     command: ./project-specific-test-command
 #     required: true
 #     timeout_seconds: 900
+#     profiles: [quick, component, full]

@@ -12,13 +12,15 @@ Knowledge Bundle without judging runtime correctness.
 
 ## Trigger
 
-After major artifact generation, during Analyze when useful, before Convergence,
+For Quick/Component, after compact Brief generation and before PR. For Full,
+after major artifact generation, during Analyze when useful, before Convergence,
 and before PR.
 
 ## Inputs
 
 `specs/index.md`, relevant feature index and concepts, `.sdd/templates/`, and
-stable REQ/AC/EVAL/TASK/EVIDENCE/FINDING references.
+stable REQ/AC/EVAL/TASK/EVIDENCE/FINDING references. Compact profiles may keep
+REQ/AC/EVAL/TASK traceability together in `brief.md`.
 
 ## Required Artifacts
 

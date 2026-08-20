@@ -16,8 +16,10 @@ The workflow is at `implement` and Analyze has passed.
 
 ## Inputs
 
-Approved Tasks, Plan, Specification, Acceptance Criteria, Eval Contract, analysis
-result, and relevant repository context.
+For Full: approved Tasks, Plan, Specification, Acceptance Criteria, Eval
+Contract, Analyze result, and relevant repository context. For Quick/Component:
+approved `brief.md` with Requirements, Acceptance Criteria, strategy, Tasks,
+and targeted evaluation intent.
 
 ## Required Artifacts
 
@@ -27,8 +29,10 @@ meaning.
 
 ## Preconditions
 
-`spec_status` and `eval_design_status` are approved, `analysis_status` is pass,
-and no required human decision is open.
+The selected profile's Brief or Full pre-implementation gates are approved and
+no required human decision is open. Full requires approved Eval Design and
+passing Analyze. Component requires Eval Design approved through `brief.md`.
+Quick records Eval Design and Analyze as `not_applicable`.
 
 ## Procedure
 

@@ -46,18 +46,24 @@ for command_name in gh jq; do
   }
 done
 
-jq -e --argjson issue "$issue" '.issue == $issue and (.current_stage | type == "string" and length > 0) and (.updated_at | type == "string" and length > 0)' "$state_file" >/dev/null || {
-  echo "error: state must be persisted, match the Issue, and contain current_stage and updated_at" >&2
+jq -e --argjson issue "$issue" '.issue == $issue and (.current_stage | type == "string" and length > 0) and ((.profile // "full") | IN("quick", "component", "full")) and (.updated_at | type == "string" and length > 0)' "$state_file" >/dev/null || {
+  echo "error: state must be persisted, match the Issue, and contain valid profile, current_stage, and updated_at" >&2
   exit 1
 }
 
 current_stage="$(jq -r '.current_stage' "$state_file")"
+profile="$(jq -r '.profile // "full"' "$state_file")"
 target_label="stage:${current_stage}"
+target_profile_label="workflow:${profile}"
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 manifest="${script_dir}/../../.github/labels.json"
 
 jq -e --arg label "$target_label" 'any(.[]; .name == $label)' "$manifest" >/dev/null || {
   echo "error: workflow stage '$current_stage' has no canonical label in $manifest" >&2
+  exit 1
+}
+jq -e --arg label "$target_profile_label" 'any(.[]; .name == $label)' "$manifest" >/dev/null || {
+  echo "error: workflow profile '$profile' has no canonical label in $manifest" >&2
   exit 1
 }
 
@@ -71,32 +77,38 @@ if [[ -n "$repo" ]]; then
   repo_args=(--repo "$repo")
 fi
 
-mapfile -t existing_stage_labels < <(gh issue view "$issue" "${repo_args[@]}" --json labels --jq '.labels[].name | select(startswith("stage:"))')
+mapfile -t existing_projection_labels < <(gh issue view "$issue" "${repo_args[@]}" --json labels --jq '.labels[].name | select(startswith("stage:") or startswith("workflow:"))')
 
 remove_args=()
-target_present=false
-for label in "${existing_stage_labels[@]}"; do
+stage_present=false
+profile_present=false
+for label in "${existing_projection_labels[@]}"; do
   if [[ "$label" == "$target_label" ]]; then
-    target_present=true
+    stage_present=true
+  elif [[ "$label" == "$target_profile_label" ]]; then
+    profile_present=true
   else
     remove_args+=(--remove-label "$label")
   fi
 done
 
 add_args=()
-if [[ "$target_present" == false ]]; then
-  add_args=(--add-label "$target_label")
+if [[ "$stage_present" == false ]]; then
+  add_args+=(--add-label "$target_label")
+fi
+if [[ "$profile_present" == false ]]; then
+  add_args+=(--add-label "$target_profile_label")
 fi
 
 if [[ ${#remove_args[@]} -eq 0 && ${#add_args[@]} -eq 0 ]]; then
-  echo "stage label already synchronized: $target_label"
+  echo "workflow labels already synchronized: $target_profile_label, $target_label"
   exit 0
 fi
 
 if [[ "$dry_run" == true ]]; then
-  echo "would synchronize Issue #${issue} to ${target_label} from persisted state ${state_file}"
+  echo "would synchronize Issue #${issue} to ${target_profile_label} and ${target_label} from persisted state ${state_file}"
   exit 0
 fi
 
 gh issue edit "$issue" "${repo_args[@]}" "${remove_args[@]}" "${add_args[@]}" >/dev/null
-echo "synchronized Issue #${issue} to ${target_label}"
+echo "synchronized Issue #${issue} to ${target_profile_label} and ${target_label}"

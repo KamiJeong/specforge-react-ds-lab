@@ -7,9 +7,59 @@ review_iteration_limit: 2
 state_authority: specs/<correlation>-<slug>/state.json
 
 orchestrator:
-  model: gpt-5.6-sol
-  reasoning: high
+  model: gpt-5.6-terra
+  reasoning: medium
   actor: specforge-orchestrator/v1
+
+profiles:
+  quick:
+    description: Low-risk, local, reversible changes with no external contract or sensitive boundary impact.
+    initial_stage: spec
+    route: [spec, implement, verify, review, ready-pr]
+    retry_route: [review, fix, verify, review]
+    brief_artifact: brief.md
+    delivery_artifact: delivery.md
+    verification_scope: targeted
+    knowledge_validation_checkpoints: [after-brief, before-ready-pr]
+  component:
+    description: Shared UI component work that needs API, state, interaction, visual, and accessibility evaluation.
+    initial_stage: spec
+    route: [spec, implement, verify, eval, review, ready-pr]
+    retry_route: [review, fix, verify, eval, review]
+    brief_artifact: brief.md
+    delivery_artifact: delivery.md
+    verification_scope: targeted
+    knowledge_validation_checkpoints: [after-brief, before-ready-pr]
+  full:
+    description: High-risk, cross-boundary, externally contracted, or otherwise complex delivery.
+    initial_stage: intake
+    route: [intake, spec, clarify, eval-design, plan, tasks, analyze, implement, verify, eval, review, converge, ready-pr]
+    retry_route: [review, fix, verify, eval, review]
+    verification_scope: full
+    knowledge_validation_checkpoints: [after-major-artifacts, during-analyze, before-converge, before-ready-pr]
+
+profile_selection:
+  precedence: [explicit-cli, single-workflow-label, automatic-risk-classification]
+  labels: [workflow:quick, workflow:component, workflow:full]
+  default: component
+  promote_to_full_when:
+    - authentication, authorization, cryptography, or security boundary
+    - sensitive data, persistence, schema, or irreversible migration
+    - externally published or relied-upon API compatibility
+    - cross-service or cross-package architecture change
+    - critical performance budget or significant infrastructure cost
+    - Constitution exception or unresolved product semantics
+  notes:
+    - An internal design-system component API is not by itself an external public API.
+    - Conflicting profile labels or uncertain high-impact scope select full.
+
+model_escalation:
+  default: gpt-5.6-terra/medium
+  use_sol_high_when:
+    - a full-profile risk requires architecture or contract adjudication
+    - security, data integrity, or irreversible migration decisions are unresolved
+    - an externally published API break is proposed
+    - complex failure analysis, disputed P0/P1 review, or final high-risk adjudication is required
 
 stages:
   intake:
@@ -88,16 +138,16 @@ stages:
 
 allowed_transitions:
   intake: [spec]
-  spec: [clarify]
+  spec: [clarify, implement]
   clarify: [spec, eval-design]
   eval-design: [clarify, spec, plan]
   plan: [clarify, spec, eval-design, tasks]
   tasks: [clarify, spec, eval-design, plan, analyze]
   analyze: [clarify, spec, eval-design, plan, tasks, implement]
   implement: [clarify, spec, eval-design, plan, tasks, verify]
-  verify: [implement, fix, eval]
+  verify: [implement, fix, eval, review]
   eval: [implement, fix, eval-design, review]
-  review: [fix, converge]
+  review: [fix, converge, ready-pr]
   fix: [clarify, spec, eval-design, plan, tasks, verify]
   converge: [clarify, spec, eval-design, plan, tasks, implement, verify, eval, review, fix, ready-pr]
   ready-pr: []
@@ -140,23 +190,45 @@ retry_behavior:
   on_limit: persist blocking question, apply gate:human-required, and stop
 
 knowledge_validation_checkpoints:
-  - after intake, spec, clarify, eval-design, plan, and tasks artifact generation
-  - during analyze when useful
-  - before converge
-  - before ready-pr
+  full:
+    - after intake, spec, clarify, eval-design, plan, and tasks artifact generation
+    - during analyze when useful
+    - before converge
+    - before ready-pr
+  quick:
+    - after compact brief generation
+    - before ready-pr
+  component:
+    - after compact brief generation
+    - before ready-pr
 
 spike_route:
   stages: [intake, clarify, eval-design, analyze, converge, ready-pr]
   notes: Investigation evidence replaces production implementation unless the approved spike explicitly includes code.
 
 pr_readiness_conditions:
-  - spec_status is approved
-  - eval_design_status is approved
-  - analysis_status is pass
-  - implementation_status is complete, or the approved issue type is spike
-  - verification_status is pass, or explicitly not applicable for an approved spike
-  - eval_status is pass
-  - open P0 findings equals 0
-  - open P1 findings equals 0
-  - convergence_status is pass
-  - final knowledge validation passes
+  common:
+    - implementation_status is complete, or the approved issue type is spike
+    - verification_status is pass, or explicitly not applicable for an approved spike
+    - open P0 findings equals 0
+    - open P1 findings equals 0
+    - no required human decision is open
+    - final profile-appropriate knowledge validation passes
+  quick:
+    - spec_status is approved through brief.md
+    - eval_design_status is not_applicable
+    - analysis_status is not_applicable
+    - eval_status is not_applicable
+    - convergence_status is not_applicable
+  component:
+    - spec_status is approved through brief.md
+    - eval_design_status is approved through brief.md
+    - analysis_status is not_applicable
+    - eval_status is pass
+    - convergence_status is not_applicable
+  full:
+    - spec_status is approved
+    - eval_design_status is approved
+    - analysis_status is pass
+    - eval_status is pass
+    - convergence_status is pass

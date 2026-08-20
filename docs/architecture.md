@@ -50,8 +50,10 @@ GitHub Issue ───────► Orchestrator
                 GitHub PR
 ```
 
-The diagram groups quality responsibilities visually; execution order remains
-strictly Implement → Verify → Eval → Review.
+The diagram shows the Full profile. Component keeps
+Implement → Verify → Eval → Review; Quick uses
+Implement → Verify → Review because its targeted Verification is the approved
+observable check. All profiles preserve independent Review.
 
 ## Authority and control planes
 
@@ -67,6 +69,12 @@ The workflow has three distinct stores:
 - `specs/<issue>-<slug>/state.json` is authoritative runtime state for one Issue.
 - Persistent Markdown concepts are durable development knowledge and evidence
   narrative. `evidence/manifest.json` indexes observed proof.
+
+`.sdd/workflow.yaml` also defines Quick, Component, and Full routes. Compact
+profiles combine the pre-implementation authority layers into one `brief.md`
+without merging Implementer and Reviewer responsibility. They use one
+`delivery.md` for observed checks, evaluation evidence when applicable,
+independent Review, and residual risk.
 
 GitHub `stage:*` labels mirror `state.json`. They are convenient for humans but
 cannot authorize a transition. The synchronizer reads confirmed persisted state

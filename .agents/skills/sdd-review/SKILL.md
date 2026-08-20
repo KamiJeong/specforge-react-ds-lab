@@ -16,26 +16,33 @@ including after each fix loop.
 
 ## Inputs
 
-Constitution, Spec/AC, Eval Contract, Plan, Tasks, implementation diff, Verify and
-Eval results/evidence, and relevant repository context. Exclude Implementer
-self-justification as authoritative evidence.
+Constitution, selected profile, authoritative behavior contract, implementation
+diff, Verify and applicable Eval results/evidence, and relevant repository
+context. Full uses Spec/AC, Eval Contract, Plan, and Tasks; Quick/Component use
+`brief.md`. Exclude Implementer self-justification as authoritative evidence.
 
 ## Required Artifacts
 
-`.sdd/templates/review.md` and `.sdd/schemas/review-finding.schema.json`; the
-read-only Reviewer returns findings for Orchestrator persistence in `review.md`
-and `state.json`.
+`.sdd/schemas/review-finding.schema.json`. Full uses
+`.sdd/templates/review.md`; Quick/Component use
+`.sdd/templates/delivery.md`. The read-only Reviewer returns findings for
+Orchestrator persistence in the profile artifact and `state.json`.
 
 ## Preconditions
 
-Verification PASS, all blocking Evals PASS, and Reviewer context is independent
-from Implementer context.
+Verification PASS, every blocking Eval applicable to the selected profile PASS,
+and Reviewer context independent from Implementer context. Quick may have
+`eval_status: not_applicable`.
 
 ## Procedure
 
-Review correctness, regressions, architecture, security, error handling, races,
-performance, accessibility, maintainability, complexity, dependencies, tests,
-Eval coverage, and false-confidence tests. Assign stable
+Select review dimensions from the persisted profile and actual changed surface.
+Quick normally covers correctness, regressions, error handling, maintainability,
+and test adequacy. Component additionally covers component API consistency,
+states/events, keyboard/focus behavior, accessibility, visual contracts, and
+compatibility. Full retains the broad architecture, security, concurrency,
+performance, dependency, and Eval adequacy review. Activate any omitted
+dimension when repository evidence shows impact. Assign stable
 `FINDING-<issue>-<sequence>` IDs and P0 BLOCKER, P1 MUST_FIX, P2 SHOULD_FIX, or
 P3 OPTIONAL with concrete evidence and affected Requirements.
 
@@ -55,7 +62,8 @@ review PASS automatically, or resolve findings without re-review.
 
 ## Outputs
 
-OKF-conformant `review.md`, updated review iteration, and open finding records.
+OKF-conformant `review.md` for Full or Review section in `delivery.md` for
+Quick/Component, updated review iteration, and open finding records.
 
 ## Completion Criteria
 
@@ -69,8 +77,10 @@ independence.
 
 ## State Transition
 
-Move to `converge` when P0/P1 are zero. Otherwise move to `fix`. Increment
-`review_iteration`; after two unsuccessful fix iterations require human review.
+Move directly to `ready-pr` for Quick/Component when P0/P1 are zero and compact
+Delivery readiness passes. Full moves to `converge`. Otherwise move to `fix`.
+Increment `review_iteration`; after two unsuccessful fix iterations require
+human review.
 
 ## GitHub Label Transition
 
