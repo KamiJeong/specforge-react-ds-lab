@@ -379,3 +379,9 @@ evidence is recorded as `EVIDENCE-1-009` through `EVIDENCE-1-012` in
 All four blocking component Evals are **PASS** with sufficient observed
 evidence. The workflow may return to independent Review. This Eval record does
 not close findings, change state, or synchronize labels.
+
+## Pull Request
+
+Created [PR #3](https://github.com/KamiJeong/specforge-react-ds-lab/pull/3)
+against `main` from `feature/1-react-design-system-foundation-button`; its body
+includes `Closes #1` and the compact-profile validation, Eval, and Review record.

@@ -12,3 +12,4 @@
 - [Compact Brief](brief.md) — approved component contract, blocking Eval design, strategy, and tasks
 - [Compact Delivery](delivery.md) — targeted verification and independent component Eval results
 - [Eval evidence manifest](evidence/manifest.json) — EVIDENCE-1-001 through EVIDENCE-1-012, including final post-authorization independent Eval evidence
+- [Pull request #3](https://github.com/KamiJeong/specforge-react-ds-lab/pull/3) — open PR for Issue #1
