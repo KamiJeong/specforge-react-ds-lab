@@ -1,6 +1,6 @@
 ---
 name: sdd-fix
-description: Resolve approved P0-P3 Review Findings with scoped remediation, then require re-Verification, re-Eval, and re-Review.
+description: Resolve approved Review Findings with scoped remediation, then require profile-appropriate re-Verification, applicable re-Eval, and re-Review.
 ---
 
 # SDD Fix
@@ -16,8 +16,9 @@ The workflow is at `fix` with approved open findings.
 
 ## Inputs
 
-Open findings, Constitution, Spec/AC, Eval Contract, Plan, Tasks, diff, and prior
-Verify/Eval evidence.
+Open findings, Constitution, selected profile, authoritative behavior contract,
+diff, and prior Verify/applicable Eval evidence. Full uses Spec/AC, Eval
+Contract, Plan, and Tasks; compact profiles use `brief.md`.
 
 ## Required Artifacts
 
@@ -65,8 +66,9 @@ require unsafe/unapproved behavior.
 
 ## State Transition
 
-Move to `verify`; required path is Fix→Verify→Eval→Review. On higher-level
-conflict route to its owning stage. Enforce the two-iteration default limit.
+Move to `verify`; Quick follows Fix→Verify→Review, while Component and Full
+follow Fix→Verify→Eval→Review. On higher-level conflict route to its owning
+stage or promote to Full. Enforce the two-iteration default limit.
 
 ## GitHub Label Transition
 

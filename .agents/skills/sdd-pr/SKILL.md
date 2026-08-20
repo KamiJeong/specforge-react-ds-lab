@@ -15,30 +15,32 @@ The workflow is at `ready-pr`, or a user requests the final PR after all gates.
 
 ## Inputs
 
-Issue, final state, Specification, Tasks, Plan, Eval Contract, Verification, Eval
-Evidence, Review, Convergence, residual P2/P3 findings, risks, rollback plan, Git
-branch/diff, and repository remote.
+Issue, final state and profile, Git branch/diff, and repository remote. Full
+consumes Specification, Tasks, Plan, Eval Contract, Verification, Eval Evidence,
+Review, and Convergence. Quick/Component consume `brief.md`, `delivery.md`,
+and retained component evidence when applicable.
 
 ## Required Artifacts
 
-`.github/PULL_REQUEST_TEMPLATE.md`, feature knowledge links, and persisted
-`state.json`. PR text may be staged in the feature directory only when the
-project chooses to retain it.
+`.github/PULL_REQUEST_TEMPLATE.md`, profile-appropriate feature knowledge
+links, and persisted `state.json`. PR text may be staged in the feature
+directory only when the project chooses to retain it.
 
 ## Preconditions
 
-Current stage is `ready-pr`; final knowledge validation and every
-`pr_readiness_conditions` item in `.sdd/workflow.yaml` pass; branch contains only
+Current stage is `ready-pr`; final knowledge validation and every common and
+selected-profile item in `pr_readiness_conditions` passes; branch contains only
 intended changes; GitHub authentication is available.
 
 ## Procedure
 
-Confirm state and evidence again. Prepare Problem, Source Issue, Specification
-Summary, Requirements Implemented, Implementation Summary, Important Decisions,
-Eval Contract Summary, Verification Evidence, Eval Evidence, Review Result,
-remaining P2/P3, Known Risks, Rollback, and SDD Artifact References. Include
-`Closes #<issue>` for Issue mode. Create the PR only through the authorized GitHub
-workflow and capture the real URL.
+Confirm state, profile, and evidence again. Prepare Problem, Source Issue,
+Behavioral Contract, Requirements Implemented, Implementation Summary, Important
+Decisions, Verification/Eval Evidence, Review Result, remaining P2/P3, Known
+Risks, Rollback, and profile-appropriate artifact references. Compact PRs link
+`brief.md` and `delivery.md`; Full links the complete chain. Include
+`Closes #<issue>` for Issue mode. Create the PR only through the authorized
+GitHub workflow and capture the real URL.
 
 ## Recommended Agent
 

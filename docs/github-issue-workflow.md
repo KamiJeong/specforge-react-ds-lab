@@ -43,8 +43,9 @@ spike/152-rendering-performance
 ## Label taxonomy
 
 `.github/labels.json` is canonical. Normally an active Issue has exactly one
-`type:*`, one `stage:*`, and optionally one `priority:*`, state/gate labels, and
-multiple `risk:*` labels. Issue priority is not Review Finding severity.
+`type:*`, one `workflow:quick|component|full`, one `stage:*`, and optionally
+one `priority:*`, state/gate labels, and multiple `risk:*` labels. Issue
+priority is not Review Finding severity.
 
 Run the idempotent bootstrap after creating a repository from the template:
 
@@ -66,14 +67,17 @@ scripts/github/sync-stage-label.sh --dry-run 152 specs/152-organization-rbac/sta
 scripts/github/sync-stage-label.sh 152 specs/152-organization-rbac/state.json
 ```
 
-The script verifies that state is non-empty, matches the Issue, has a current
-stage and update time, and maps to a canonical label. It reads existing Issue
-labels and then replaces stale `stage:*` labels. It never writes state.
+The script verifies that state is non-empty, matches the Issue, has a valid
+profile, current stage, and update time, and maps both projections to canonical
+labels. It then replaces stale `workflow:*` and `stage:*` labels. Existing
+state without a profile is treated as Full for backward compatibility. It never
+writes state.
 
 Priority semantics are P0 critical/immediate/release blocker, P1 high, P2 normal,
-and P3 low. Risk labels are not decorative: the Orchestrator uses them to deepen
-review, select applicable Eval categories, escalate model routing, and identify
-human decision boundaries. Review Finding severity remains a separate scale.
+and P3 low. Risk labels are not decorative: the Orchestrator uses them to select
+or promote the delivery profile, scope review/Evals, escalate bounded model
+routing, and identify human decision boundaries. Review Finding severity remains
+a separate scale.
 
 ## Pull Requests
 

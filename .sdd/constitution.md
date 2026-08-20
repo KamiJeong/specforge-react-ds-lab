@@ -104,7 +104,8 @@ prompts. Links, status, provenance, and traceability must remain useful.
 ## AI development rules
 
 - The Issue is raw intent, not the final Specification.
-- Never implement before required gates pass.
+- Select and persist a risk-proportional delivery profile before implementation.
+- Never implement before the selected profile's required gates pass.
 - Never silently modify higher-authority artifacts from an implementation stage.
 - Always Verify before Eval and run every required Eval before completion.
 - Never treat Implementer self-review as independent Review.
@@ -149,8 +150,10 @@ software behavior. These meanings must not be conflated.
 
 ## Completion
 
-Code existing is not completion. A normal implementation is complete only when
-the Specification and clarification gates pass; Eval Design, Plan, Tasks, and
-Analyze are valid; implementation is complete; Verification passes; all blocking
-Evals pass with evidence; no P0 or P1 Review Findings remain; Convergence passes;
-and final knowledge validation is sufficient for PR creation.
+Code existing is not completion. Every profile requires an approved behavioral
+contract, completed implementation, observed profile-appropriate Verification,
+independent Review with no open P0/P1, no open human gate, and final knowledge
+validation. Component additionally requires its blocking Evals PASS with
+evidence. Full additionally requires separate Specification, Clarification,
+Eval Design, Plan, Tasks, Analyze, Eval, and Convergence gates. Compact delivery
+must promote to Full when its risk boundary is crossed.

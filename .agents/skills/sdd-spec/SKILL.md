@@ -20,7 +20,10 @@ contracts or repository conventions.
 
 ## Required Artifacts
 
-`.sdd/templates/spec.md`; persist `spec.md` and update the feature index.
+For `full`, use `.sdd/templates/spec.md` and persist `spec.md`. For
+`quick` or `component`, use `.sdd/templates/brief.md` and persist one
+`brief.md` containing Specification, applicable Eval intent, strategy, and
+Tasks. Update the feature index.
 
 ## Preconditions
 
@@ -31,7 +34,9 @@ Intake is complete and critical source gaps are identified.
 Define scope, non-goals, constraints, and stable `REQ-<issue>-<sequence>` IDs.
 Give each significant Requirement measurable `AC-<issue>-<sequence>` criteria.
 Describe observable behavior, including relevant negative and compatibility
-cases, without prescribing unnecessary implementation.
+cases, without prescribing unnecessary implementation. For compact profiles,
+follow `sdd-fast` and complete the combined Brief in a single Architect pass
+instead of creating Clarify, Eval Design, Plan, Tasks, and Analyze artifacts.
 
 ## Recommended Agent
 
@@ -48,8 +53,7 @@ promises, or renumber stable IDs during normal revision.
 
 ## Outputs
 
-OKF-conformant `spec.md` with Requirements, Acceptance Criteria, constraints,
-non-goals, and open questions.
+OKF-conformant `spec.md` for Full or compact `brief.md` for Quick/Component.
 
 ## Completion Criteria
 
@@ -63,8 +67,9 @@ boundary, or acceptance behavior that cannot be made observable.
 
 ## State Transition
 
-Persist draft or approved `spec_status`. On a complete draft move to `clarify`;
-route conflicts according to the Orchestrator.
+Persist draft or approved `spec_status`. Full moves to `clarify`. A valid
+compact Brief moves directly to `implement`; route conflicts or promotion
+conditions through the Orchestrator.
 
 ## GitHub Label Transition
 

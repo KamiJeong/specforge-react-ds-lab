@@ -16,16 +16,18 @@ The workflow is at `eval` and required Verification has passed.
 
 ## Inputs
 
-Specification, Acceptance Criteria, Eval Contract, passing Verification,
-implementation under test, environment, and `.sdd/evidence.yaml` retention
-policy.
+Authoritative behavior and Eval Contract, passing Verification, implementation
+under test, environment, and `.sdd/evidence.yaml` retention policy. Full reads
+the separate Specification and `evals.md`; Component reads `brief.md`.
 
 ## Required Artifacts
 
 `.sdd/evidence.yaml`, `.sdd/templates/eval-results.md`,
 `.sdd/schemas/eval-result.schema.json`, and
-`.sdd/schemas/evidence.schema.json`; persist `eval-results.md` and
-`evidence/manifest.json`, then update the feature index.
+`.sdd/schemas/evidence.schema.json`. Full persists `eval-results.md` and
+`evidence/manifest.json`. Component records the compact narrative in
+`delivery.md` and persists `evidence/manifest.json` when evidence is retained.
+Quick marks Eval not applicable and does not enter this stage.
 
 ## Preconditions
 

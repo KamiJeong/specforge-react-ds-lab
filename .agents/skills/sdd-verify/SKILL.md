@@ -31,11 +31,13 @@ without inventing unavailable dependencies.
 
 ## Procedure
 
-Run required commands in declared order: formatting checks, lint, typecheck,
-compile/build, unit/integration tests, dependency checks, or coverage only when
-configured. Record exact command, meaningful environment, exit code, result,
+Use the selected profile's scope from `.sdd/verification.yaml`. Quick and
+Component run targeted changed-package or explicitly Brief-approved checks;
+Full runs configured full checks. Run formatting, lint, typecheck, compile/build,
+unit/integration tests, dependency checks, or coverage only when configured for
+that scope. Record exact command, meaningful environment, exit code, result,
 actual execution timestamp, and revision when practical. Do not report commands
-that were not run. Required failure blocks Eval.
+that were not run. Required failure blocks the next profile stage.
 
 ## Recommended Agent
 
@@ -53,8 +55,8 @@ failed command successful, or collapse acceptance Eval into Verification.
 
 ## Outputs
 
-OKF-conformant `verification.md` with PASS, FAIL, or BLOCKED and auditable command
-records.
+For Full, an OKF-conformant `verification.md`. For Quick/Component, append
+auditable targeted results to `delivery.md`. Both use PASS, FAIL, or BLOCKED.
 
 ## Completion Criteria
 
@@ -68,8 +70,9 @@ establish repository health.
 
 ## State Transition
 
-On PASS set `verification_status: pass` and move to `eval`. On failure return to
-`implement` or `fix` according to review history; BLOCKED remains at `verify`.
+On PASS, Quick moves to `review`; Component and Full move to `eval`. On
+failure return to `implement` or `fix` according to review history; BLOCKED
+remains at `verify`.
 
 ## GitHub Label Transition
 

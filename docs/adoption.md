@@ -28,6 +28,11 @@ not infer npm, Maven, Cargo, Python, or any other ecosystem. Mark each command
 required or optional and set reasonable timeouts. Commands must be safe for the
 evaluation environment and must not expose secrets in retained output.
 
+Configure commands by profile once project scripts exist. Quick and Component
+should use targeted changed-package or component checks during the development
+loop; Full should execute every required project check. Keep the command list
+empty rather than inventing npm/pnpm commands before the React workspace exists.
+
 ## 4. Bootstrap GitHub metadata
 
 Authenticate GitHub CLI, install `jq`, and run:
@@ -61,6 +66,18 @@ then run:
 ```text
 $sdd-run issue #123
 ```
+
+Choose a profile explicitly when useful:
+
+```text
+$sdd-run issue #123 --profile quick
+$sdd-run issue #124 --profile component
+$sdd-run issue #125 --profile full
+```
+
+Ordinary shared design-system components default to Component. Authentication,
+security/data boundaries, migrations, externally published API breaks,
+cross-boundary architecture, and critical performance/cost promote to Full.
 
 The first run creates `specs/123-<slug>/` progressively. Do not pre-create empty
 stage artifacts. Resume later with the same command; persisted state and

@@ -44,6 +44,7 @@ STAGES = {
 }
 SKILLS = {
     "sdd-run",
+    "sdd-fast",
     "sdd-intake",
     "sdd-spec",
     "sdd-clarify",
@@ -61,12 +62,12 @@ SKILLS = {
     "sdd-pr",
 }
 AGENT_ROUTES = {
-    "architect": ("gpt-5.6-sol", "high", "workspace-write"),
+    "architect": ("gpt-5.6-terra", "medium", "workspace-write"),
     "explorer": ("gpt-5.6-terra", "medium", "read-only"),
-    "implementer": ("gpt-5.6-terra", "high", "workspace-write"),
-    "evaluator": ("gpt-5.6-terra", "high", "workspace-write"),
-    "reviewer": ("gpt-5.6-sol", "high", "read-only"),
-    "fixer": ("gpt-5.6-terra", "high", "workspace-write"),
+    "implementer": ("gpt-5.6-terra", "medium", "workspace-write"),
+    "evaluator": ("gpt-5.6-terra", "medium", "workspace-write"),
+    "reviewer": ("gpt-5.6-terra", "medium", "read-only"),
+    "fixer": ("gpt-5.6-terra", "medium", "workspace-write"),
     "utility": ("gpt-5.6-luna", "low", "workspace-write"),
 }
 REQUIRED_SKILL_SECTIONS = {
@@ -212,8 +213,8 @@ def validate_agents(report: Report) -> set[str]:
     except (OSError, UnicodeError, tomllib.TOMLDecodeError) as exc:
         report.error(f"{relative(config_path)}: invalid TOML: {exc}")
         return found
-    report.check(config.get("model") == "gpt-5.6-sol", ".codex/config.toml: Orchestrator model must be gpt-5.6-sol")
-    report.check(config.get("model_reasoning_effort") == "high", ".codex/config.toml: Orchestrator reasoning must be high")
+    report.check(config.get("model") == "gpt-5.6-terra", ".codex/config.toml: Orchestrator model must be gpt-5.6-terra")
+    report.check(config.get("model_reasoning_effort") == "medium", ".codex/config.toml: Orchestrator reasoning must be medium")
     report.check(config.get("agents", {}).get("enabled") is True, ".codex/config.toml: agents must be enabled")
     return found
 
@@ -247,6 +248,7 @@ def validate_workflow(report: Report, agents: set[str], skills: set[str], transi
         return {}
     stage_map = workflow.get("stages", {})
     allowed = workflow.get("allowed_transitions", {})
+    profiles = workflow.get("profiles", {})
     report.check(set(stage_map) == STAGES, f"{relative(path)}: stage set mismatch")
     report.check(set(allowed) == STAGES, f"{relative(path)}: transition source set mismatch")
     for stage, targets in allowed.items():
@@ -269,6 +271,32 @@ def validate_workflow(report: Report, agents: set[str], skills: set[str], transi
     report.check(workflow.get("review_iteration_limit") == 2, f"{relative(path)}: review iteration limit must be 2")
     report.check(bool(workflow.get("human_gates")), f"{relative(path)}: human gates missing")
     report.check(bool(workflow.get("pr_readiness_conditions")), f"{relative(path)}: PR readiness conditions missing")
+    report.check(set(profiles) == {"quick", "component", "full"}, f"{relative(path)}: profiles must be quick, component, and full")
+    for profile, definition in profiles.items():
+        if not isinstance(definition, dict):
+            report.error(f"{relative(path)}: profile {profile} must be a mapping")
+            continue
+        route = definition.get("route")
+        report.check(isinstance(route, list) and bool(route), f"{relative(path)}: profile {profile} route must be a non-empty list")
+        if not isinstance(route, list) or not route:
+            continue
+        report.check(definition.get("initial_stage") == route[0], f"{relative(path)}: profile {profile} initial_stage must match route")
+        report.check(route[-1] == "ready-pr", f"{relative(path)}: profile {profile} must terminate at ready-pr")
+        for stage in route:
+            report.check(stage in STAGES, f"{relative(path)}: profile {profile} references unknown stage {stage}")
+        for source, target in zip(route, route[1:]):
+            report.check(target in allowed.get(source, []), f"{relative(path)}: profile {profile} uses illegal transition {source}->{target}")
+        retry_route = definition.get("retry_route")
+        report.check(isinstance(retry_route, list) and bool(retry_route), f"{relative(path)}: profile {profile} retry_route must be a non-empty list")
+        if isinstance(retry_route, list):
+            for source, target in zip(retry_route, retry_route[1:]):
+                report.check(target in allowed.get(source, []), f"{relative(path)}: profile {profile} uses illegal retry transition {source}->{target}")
+    selection = workflow.get("profile_selection", {})
+    report.check(selection.get("default") == "component", f"{relative(path)}: profile selection default must be component")
+    report.check(bool(selection.get("promote_to_full_when")), f"{relative(path)}: full-promotion conditions missing")
+    escalation = workflow.get("model_escalation", {})
+    report.check(escalation.get("default") == "gpt-5.6-terra/medium", f"{relative(path)}: default model route must be Terra/medium")
+    report.check(bool(escalation.get("use_sol_high_when")), f"{relative(path)}: Sol/high escalation conditions missing")
     reachable = {"intake"}
     frontier = ["intake"]
     while frontier:
@@ -348,13 +376,25 @@ def validate_state(path: Path, report: Report, schemas: dict[Path, Any], store: 
     if isinstance(state.get("issue"), int):
         report.check(state.get("correlation_id") == str(state["issue"]), f"{relative(path)}: Issue workflow correlation_id must equal issue number")
     if state.get("current_stage") == "ready-pr":
+        profile = state.get("profile", "full")
         report.check(state.get("spec_status") == "approved", f"{relative(path)}: ready-pr requires approved Spec")
-        report.check(state.get("eval_design_status") == "approved", f"{relative(path)}: ready-pr requires approved Eval Design")
-        report.check(state.get("analysis_status") == "pass", f"{relative(path)}: ready-pr requires passing Analyze")
         report.check(state.get("implementation_status") in {"complete", "not_applicable"}, f"{relative(path)}: ready-pr requires complete implementation or an explicit spike exception")
         report.check(state.get("verification_status") in {"pass", "not_applicable"}, f"{relative(path)}: ready-pr requires passing Verification or an explicit spike exception")
-        report.check(state.get("eval_status") == "pass", f"{relative(path)}: ready-pr requires passing Evals")
-        report.check(state.get("convergence_status") == "pass", f"{relative(path)}: ready-pr requires passing Convergence")
+        if profile == "quick":
+            report.check(state.get("eval_design_status") == "not_applicable", f"{relative(path)}: quick ready-pr requires Eval Design not_applicable")
+            report.check(state.get("analysis_status") == "not_applicable", f"{relative(path)}: quick ready-pr requires Analyze not_applicable")
+            report.check(state.get("eval_status") == "not_applicable", f"{relative(path)}: quick ready-pr requires Eval not_applicable")
+            report.check(state.get("convergence_status") == "not_applicable", f"{relative(path)}: quick ready-pr requires Convergence not_applicable")
+        elif profile == "component":
+            report.check(state.get("eval_design_status") == "approved", f"{relative(path)}: component ready-pr requires approved Eval Design in Brief")
+            report.check(state.get("analysis_status") == "not_applicable", f"{relative(path)}: component ready-pr requires Analyze not_applicable")
+            report.check(state.get("eval_status") == "pass", f"{relative(path)}: component ready-pr requires passing Evals")
+            report.check(state.get("convergence_status") == "not_applicable", f"{relative(path)}: component ready-pr requires Convergence not_applicable")
+        else:
+            report.check(state.get("eval_design_status") == "approved", f"{relative(path)}: full ready-pr requires approved Eval Design")
+            report.check(state.get("analysis_status") == "pass", f"{relative(path)}: full ready-pr requires passing Analyze")
+            report.check(state.get("eval_status") == "pass", f"{relative(path)}: full ready-pr requires passing Evals")
+            report.check(state.get("convergence_status") == "pass", f"{relative(path)}: full ready-pr requires passing Convergence")
         report.check(state.get("blocked_stage") is None, f"{relative(path)}: ready-pr cannot remain blocked")
         report.check(not any(decision.get("status") == "open" for decision in state.get("manual_decisions", []) if isinstance(decision, dict)), f"{relative(path)}: ready-pr cannot have an open manual decision")
         report.check(not any(finding.get("severity") in {"P0", "P1"} and finding.get("status") in {"open", "accepted"} for finding in state.get("open_findings", []) if isinstance(finding, dict)), f"{relative(path)}: ready-pr cannot have open P0/P1 findings")
@@ -380,10 +420,11 @@ def validate_labels_and_forms(report: Report, workflow: dict[str, Any]) -> None:
 
     expected_types = {"type:feature", "type:bug", "type:refactor", "type:tech-debt", "type:chore", "type:docs", "type:spike"}
     expected_priorities = {f"priority:p{i}" for i in range(4)}
+    expected_profiles = {"workflow:quick", "workflow:component", "workflow:full"}
     expected_states = {"state:blocked", "state:needs-info", "gate:human-required", "gate:manual-eval"}
     expected_risks = {"risk:security", "risk:data", "risk:api", "risk:migration", "risk:performance", "risk:accessibility"}
     expected_stages = {f"stage:{stage}" for stage in STAGES}
-    for group in (expected_types, expected_priorities, expected_states, expected_risks, expected_stages):
+    for group in (expected_types, expected_priorities, expected_profiles, expected_states, expected_risks, expected_stages):
         report.check(group <= labels, f"{relative(manifest_path)}: missing labels {sorted(group - labels)}")
 
     config = load_yaml(ROOT / ".github" / "ISSUE_TEMPLATE" / "config.yml", report)
@@ -449,6 +490,34 @@ def sections(text: str, prefix: str) -> dict[str, str]:
 
 
 def validate_traceability(feature: Path, report: Report, schemas: dict[Path, Any], store: dict[str, Any] | None) -> None:
+    brief_path = feature / "brief.md"
+    if brief_path.exists():
+        brief = brief_path.read_text(encoding="utf-8")
+        req_sections = sections(brief, "REQ")
+        ac_ids = set(re.findall(rf"\bAC-{CORRELATION}-[0-9]{{3,}}\b", brief))
+        eval_sections = sections(brief, "EVAL")
+        task_sections = sections(brief, "TASK")
+        report.check(bool(req_sections), f"{relative(brief_path)}: no Requirements found")
+        report.check(bool(ac_ids), f"{relative(brief_path)}: no Acceptance Criteria found")
+        report.check(bool(eval_sections), f"{relative(brief_path)}: no Evals found")
+        report.check(bool(task_sections), f"{relative(brief_path)}: no Tasks found")
+        for req_id, content in req_sections.items():
+            report.check(bool(re.search(rf"\bAC-{CORRELATION}-[0-9]{{3,}}\b", content)), f"{relative(brief_path)}: {req_id} has no Acceptance Criterion")
+        for eval_id, content in eval_sections.items():
+            refs = set(re.findall(rf"\bREQ-{CORRELATION}-[0-9]{{3,}}\b", content))
+            criteria = set(re.findall(rf"\bAC-{CORRELATION}-[0-9]{{3,}}\b", content))
+            report.check(bool(refs), f"{relative(brief_path)}: {eval_id} has no Requirement")
+            report.check(bool(criteria), f"{relative(brief_path)}: {eval_id} has no Acceptance Criterion")
+            report.check(refs <= set(req_sections), f"{relative(brief_path)}: {eval_id} references unknown Requirements")
+            report.check(criteria <= ac_ids, f"{relative(brief_path)}: {eval_id} references unknown Acceptance Criteria")
+        for task_id, content in task_sections.items():
+            refs = set(re.findall(rf"\bREQ-{CORRELATION}-[0-9]{{3,}}\b", content))
+            eval_refs = set(re.findall(rf"\bEVAL-{CORRELATION}-[0-9]{{3,}}\b", content))
+            report.check(bool(refs), f"{relative(brief_path)}: {task_id} has no Requirement")
+            report.check(bool(eval_refs), f"{relative(brief_path)}: {task_id} has no Eval")
+            report.check(refs <= set(req_sections), f"{relative(brief_path)}: {task_id} references unknown Requirements")
+            report.check(eval_refs <= set(eval_sections), f"{relative(brief_path)}: {task_id} references unknown Evals")
+        return
     spec_path = feature / "spec.md"
     evals_path = feature / "evals.md"
     tasks_path = feature / "tasks.md"
