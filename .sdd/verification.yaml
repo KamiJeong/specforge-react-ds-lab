@@ -1,6 +1,26 @@
 version: 1
 description: Project-owned mechanical checks executed by sdd-verify.
-commands: []
+commands:
+  - id: typecheck
+    command: bun run typecheck
+    required: true
+    timeout_seconds: 300
+    profiles: [component, full]
+  - id: component-tests
+    command: bun run test
+    required: true
+    timeout_seconds: 300
+    profiles: [component, full]
+  - id: library-build
+    command: bun run build
+    required: true
+    timeout_seconds: 300
+    profiles: [component, full]
+  - id: storybook-build
+    command: bun run build-storybook
+    required: true
+    timeout_seconds: 600
+    profiles: [component, full]
 
 profiles:
   quick:
@@ -13,9 +33,8 @@ profiles:
     scope: full
     description: Run every required project check in declared order.
 
-# Keep commands empty until the application and package-manager scripts exist.
-# Never infer a successful command. When the React workspace is initialized,
-# add project-native commands and optionally a profiles list to each command.
+# Commands are package-root Bun scripts added by TASK-1-001. They cover the
+# TypeScript library, component tests, distributable build, and Storybook build.
 
 # Add project commands in execution order. Example:
 # commands:

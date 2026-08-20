@@ -1,0 +1,13 @@
+{
+  "name": "specforge-react-ds-lab",
+  "private": true,
+  "packageManager": "bun@1.3.14",
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "build": "bun --filter='@specforge/react-library' run build",
+    "typecheck": "bun --filter='@specforge/react-library' run typecheck",
+    "test": "bun --filter='@specforge/react-library' run test",
+    "storybook": "bun --filter='@specforge/react-library' run storybook",
+    "build-storybook": "bun --filter='@specforge/react-library' run build-storybook"
+  }
+}

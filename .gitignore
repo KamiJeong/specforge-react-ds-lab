@@ -42,3 +42,8 @@ Thumbs.db
 
 # SpecForge local scratch data (durable specs and evidence stay tracked)
 .sdd/tmp/
+
+# JavaScript workspace artifacts
+node_modules/
+packages/react-library/dist/
+packages/react-library/storybook-static/
