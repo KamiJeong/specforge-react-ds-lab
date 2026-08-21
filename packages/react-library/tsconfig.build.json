@@ -4,5 +4,5 @@
     "emitDeclarationOnly": true,
     "outDir": "dist"
   },
-  "include": ["src/Button.tsx", "src/index.ts"]
+  "include": ["src/*.tsx", "src/index.ts"]
 }

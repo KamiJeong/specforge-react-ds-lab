@@ -8,6 +8,8 @@
   --sf-color-border: #cbd5e1;
   --sf-color-text: #172033;
   --sf-color-text-muted: #64748b;
+  --sf-color-danger: #b42318;
+  --sf-color-danger-surface: #fef3f2;
   --sf-color-disabled: #e2e8f0;
   --sf-color-focus: #155eef;
   --sf-space-1: 0.25rem;
@@ -20,6 +22,8 @@
   --sf-font-size-md: 0.875rem;
   --sf-font-size-lg: 1rem;
   --sf-font-weight-medium: 600;
+  --sf-font-weight-regular: 400;
+  --sf-font-weight-bold: 700;
   --sf-line-height-control: 1.25;
   --sf-focus-ring-width: 0.1875rem;
   --sf-focus-ring-offset: 0.125rem;

@@ -19,12 +19,21 @@ try {
   cpSync(reactTypesRoot, resolve(consumerRoot, "node_modules/@types/react"), { dereference: true, recursive: true });
   cpSync(resolve(reactTypesRoot, "../../csstype"), resolve(consumerRoot, "node_modules/csstype"), { dereference: true, recursive: true });
   writeFileSync(resolve(consumerRoot, "index.ts"), [
-    'import { Button, type ButtonProps } from "@specforge/react-library";',
+    'import { Button, Field, Form, Label, List, Select, Switch, Table, Text, type ButtonProps, type FormProps, type SelectProps, type SwitchProps, type TextProps } from "@specforge/react-library";',
     'import "@specforge/react-library/tokens.css";',
     "const button: typeof Button = Button;",
     'const props: ButtonProps = { children: "Save", variant: "primary" };',
+    'const textProps: TextProps = { as: "h2", children: "Heading" };',
+    'const selectProps: SelectProps = { options: [{ label: "Korea", value: "kr" }] };',
+    'const formProps: FormProps = { "aria-label": "Profile settings" };',
+    'const switchProps: SwitchProps = { label: "Notifications", name: "notifications" };',
     "void button;",
     "void props;",
+    "void textProps;",
+    "void selectProps;",
+    "void formProps;",
+    "void switchProps;",
+    "void Field; void Form; void Label; void List; void Select; void Switch; void Table; void Text;",
   ].join("\n"));
   writeFileSync(resolve(consumerRoot, "tsconfig.json"), JSON.stringify({
     compilerOptions: {

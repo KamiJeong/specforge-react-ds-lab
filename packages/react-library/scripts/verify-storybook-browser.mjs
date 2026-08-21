@@ -17,6 +17,20 @@ const expectedStories = [
   "components-button--loading",
   "components-button--focus-visible",
   "components-button--icon-only-named",
+  "components-text--default",
+  "components-list--unordered",
+  "components-table--default",
+  "components-form--default",
+  "components-field--with-help",
+  "components-label--default",
+  "components-select--default",
+  "components-select--disabled",
+  "components-select--error",
+  "components-select--focus-visible",
+  "components-switch--unchecked",
+  "components-switch--checked",
+  "components-switch--disabled",
+  "components-switch--focus-visible",
 ];
 
 function assert(condition, message) {
@@ -63,6 +77,10 @@ try {
     const page = await browser.newPage();
     await page.goto(`${baseUrl}/index.html?path=/docs/components-button--docs`, { waitUntil: "networkidle" });
     assert((await page.locator("body").innerText()).includes("Button"), "Button documentation did not render.");
+    await page.goto(`${baseUrl}/index.html?path=/docs/components-switch--docs`, { waitUntil: "networkidle" });
+    assert((await page.locator("body").innerText()).includes("Switch"), "Switch documentation did not render.");
+    await page.goto(`${baseUrl}/index.html?path=/docs/components-form--docs`, { waitUntil: "networkidle" });
+    assert((await page.locator("body").innerText()).includes("Form"), "Form documentation did not render.");
 
     await page.goto(`${baseUrl}/iframe.html?id=components-button--focus-visible`, { waitUntil: "networkidle" });
     const button = page.getByRole("button", { name: "Continue" });
@@ -77,6 +95,21 @@ try {
       return { active: matchMedia("(forced-colors: active)").matches, outlineStyle: styles.outlineStyle, outlineWidth: styles.outlineWidth };
     });
     assert(forcedColors.active && forcedColors.outlineStyle === "solid" && forcedColors.outlineWidth !== "0px", "Forced-colors focus fallback is not rendered.");
+
+    await page.emulateMedia({ forcedColors: "none" });
+    await page.goto(`${baseUrl}/iframe.html?id=components-switch--unchecked`, { waitUntil: "networkidle" });
+    const switchControl = page.getByRole("switch", { name: "Email notifications" });
+    await switchControl.focus();
+    await page.keyboard.press("Space");
+    assert(await switchControl.isChecked(), "Switch does not toggle with Space.");
+
+    await page.goto(`${baseUrl}/iframe.html?id=components-switch--focus-visible`, { waitUntil: "networkidle" });
+    const switchFocusControl = page.locator(".sf-switch--focus-visible-story .sf-switch__control");
+    const switchFocus = await switchFocusControl.evaluate((element) => getComputedStyle(element).boxShadow);
+    assert(switchFocus !== "none", "Switch focus-visible story does not render visible focus treatment.");
+
+    await page.goto(`${baseUrl}/iframe.html?id=components-select--disabled`, { waitUntil: "networkidle" });
+    assert(await page.getByRole("combobox", { name: "Region" }).isDisabled(), "Disabled select story is interactive.");
   } finally {
     await browser.close();
   }
