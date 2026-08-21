@@ -403,3 +403,21 @@ addressed without changing the approved component contract.
 Observed after the changes: `bun run typecheck`, `bun run test` (11 tests),
 `bun run build`, and the strict external-consumer `test:package-contract` all
 exited successfully. The review threads are replied to and resolved on PR #3.
+
+## Reusable Component Quality Baseline
+
+To reduce repeated delivery setup in later components, the workspace now
+provides `bun run verify:component`. It executes TypeScript checking, component
+tests, distributable build, strict external-consumer package-contract checking,
+and a browser-observed Storybook check in one repeatable command.
+
+The new Storybook browser check verifies the required Button story inventory,
+rendered documentation, normal focus treatment, and forced-colors focus
+fallback with Playwright Chromium. `bun run install:component-browser` installs
+the project-local Chromium binary, and the library README records both commands
+as the component-delivery baseline. The configured component Verification list
+now includes strict package-contract and browser Storybook checks.
+
+Observed at 2026-08-21T00:31:11Z: browser installation and
+`bun run verify:component` completed successfully (11 tests). The Storybook
+build retains its existing non-blocking chunk-size warning.

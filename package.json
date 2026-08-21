@@ -8,6 +8,8 @@
     "typecheck": "bun --filter='@specforge/react-library' run typecheck",
     "test": "bun --filter='@specforge/react-library' run test",
     "storybook": "bun --filter='@specforge/react-library' run storybook",
-    "build-storybook": "bun --filter='@specforge/react-library' run build-storybook"
+    "build-storybook": "bun --filter='@specforge/react-library' run build-storybook",
+    "install:component-browser": "bun --filter='@specforge/react-library' run install:browser",
+    "verify:component": "bun --filter='@specforge/react-library' run verify"
   }
 }

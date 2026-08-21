@@ -21,6 +21,16 @@ commands:
     required: true
     timeout_seconds: 600
     profiles: [component, full]
+  - id: package-contract
+    command: bun --filter='@specforge/react-library' run test:package-contract
+    required: true
+    timeout_seconds: 300
+    profiles: [component, full]
+  - id: storybook-browser
+    command: bun --filter='@specforge/react-library' run test:storybook:browser
+    required: true
+    timeout_seconds: 600
+    profiles: [component, full]
 
 profiles:
   quick:
@@ -34,7 +44,8 @@ profiles:
     description: Run every required project check in declared order.
 
 # Commands are package-root Bun scripts added by TASK-1-001. They cover the
-# TypeScript library, component tests, distributable build, and Storybook build.
+# TypeScript library, component tests, strict external-consumer contract,
+# distributable build, and browser-observed Storybook rendering.
 
 # Add project commands in execution order. Example:
 # commands:
