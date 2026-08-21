@@ -11,3 +11,4 @@ Feature knowledge is added as `specs/<issue>-<slug>/`. Start from a feature's
 
 - [Issue #1 — React Design System Foundation and Button](1-react-design-system-foundation-button/index.md)
 - [Issue #4 — React Design System Foundation](4-react-design-system-foundation/index.md)
+- [Issue #6 — Design Governance](6-design-governance/index.md)

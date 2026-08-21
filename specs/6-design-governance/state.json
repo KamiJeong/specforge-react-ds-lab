@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "issue": 6,
+  "correlation_id": "6",
+  "slug": "design-governance",
+  "branch": "feature/6-design-governance",
+  "profile": "component",
+  "current_stage": "ready-pr",
+  "completed_stages": ["spec", "implement", "verify", "eval", "fix", "review"],
+  "blocked_stage": null,
+  "manual_decisions": [],
+  "assumptions": [
+    {
+      "id": "ASSUMPTION-6-001",
+      "decision": "Treat Issue #6 as product-neutral internal design-system governance and a representative Storybook reference, not an externally published API or branding commitment.",
+      "reason": "The Issue labels the work as a component workflow and explicitly excludes company branding, a complete product mockup, and broad component redesign.",
+      "evidence": ["Issue #6 labels", "Issue #6 Non-Goals", "Issue #6 Known Constraints"],
+      "impact": "The component profile applies unless implementation reveals a new external contract, unresolved product semantics, or another full-promotion condition.",
+      "source": "GitHub Issue #6",
+      "made_by": "specforge-orchestrator/v1",
+      "made_at": "2026-08-21T07:15:21Z"
+    }
+  ],
+  "spec_status": "approved",
+  "eval_design_status": "approved",
+  "analysis_status": "not_applicable",
+  "implementation_status": "complete",
+  "verification_status": "pass",
+  "eval_status": "pass",
+  "review_iteration": 1,
+  "open_findings": [
+    {
+      "id": "FINDING-6-001",
+      "severity": "P1",
+      "class": "MUST_FIX",
+      "title": "Governance guidance is not discoverable from a repository or Storybook entry point",
+      "description": "The new durable guides have no stable repository or Storybook documentation link, leaving their required governance guidance unreachable to library users.",
+      "evidence": ["docs/design-foundation.md", "docs/ui-composition-rules.md", "README.md: Read next index", "packages/react-library/src/ReferenceComposition.stories.tsx: documentation parameters"],
+      "affected_requirements": ["REQ-6-001", "REQ-6-002", "REQ-6-003"],
+      "status": "resolved",
+      "resolution": "The root README Read next index now links both durable governance guides, and independent re-review confirmed the links plus focused and Storybook browser coverage.",
+      "reported_by": "specforge-reviewer/v1",
+      "reported_at": "2026-08-21T08:18:18Z"
+    }
+  ],
+  "convergence_status": "not_applicable",
+  "updated_at": "2026-08-21T08:30:49Z"
+}

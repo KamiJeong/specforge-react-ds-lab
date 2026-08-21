@@ -287,4 +287,6 @@ Read next:
 - [Model routing](docs/model-routing.md)
 - [Human escalation](docs/human-escalation.md)
 - [Adoption guide](docs/adoption.md)
+- [Design foundation](docs/design-foundation.md)
+- [UI composition rules](docs/ui-composition-rules.md)
 - [Small end-to-end example](examples/sample-feature/index.md)

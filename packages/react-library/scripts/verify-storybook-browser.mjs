@@ -31,6 +31,7 @@ const expectedStories = [
   "components-switch--checked",
   "components-switch--disabled",
   "components-switch--focus-visible",
+  "foundations-reference-composition--default",
 ];
 
 function assert(condition, message) {
@@ -81,6 +82,8 @@ try {
     assert((await page.locator("body").innerText()).includes("Switch"), "Switch documentation did not render.");
     await page.goto(`${baseUrl}/index.html?path=/docs/components-form--docs`, { waitUntil: "networkidle" });
     assert((await page.locator("body").innerText()).includes("Form"), "Form documentation did not render.");
+    await page.goto(`${baseUrl}/index.html?path=/docs/foundations-reference-composition--docs`, { waitUntil: "networkidle" });
+    assert((await page.locator("body").innerText()).includes("Reference Composition"), "Reference composition documentation did not render.");
 
     await page.goto(`${baseUrl}/iframe.html?id=components-button--focus-visible`, { waitUntil: "networkidle" });
     const button = page.getByRole("button", { name: "Continue" });
@@ -110,6 +113,24 @@ try {
 
     await page.goto(`${baseUrl}/iframe.html?id=components-select--disabled`, { waitUntil: "networkidle" });
     assert(await page.getByRole("combobox", { name: "Region" }).isDisabled(), "Disabled select story is interactive.");
+
+    await page.goto(`${baseUrl}/iframe.html?id=foundations-reference-composition--default`, { waitUntil: "networkidle" });
+    assert(await page.getByRole("main", { name: "Configuration reference" }).isVisible(), "Reference composition does not render its named main landmark.");
+    assert(await page.getByRole("alert").isVisible(), "Reference composition does not render its representative error state.");
+    assert(await page.getByRole("status").isVisible(), "Reference composition does not render its representative empty state.");
+    const referenceSwitch = page.getByRole("switch", { name: "Enable notifications" });
+    await referenceSwitch.focus();
+    assert((await referenceSwitch.evaluate((element) => getComputedStyle(element.nextElementSibling).boxShadow)) !== "none", "Reference switch focus treatment is not rendered.");
+    await page.emulateMedia({ forcedColors: "active" });
+    await referenceSwitch.focus();
+    const referenceForcedColors = await referenceSwitch.evaluate((element) => {
+      const styles = getComputedStyle(element.nextElementSibling);
+      return { active: matchMedia("(forced-colors: active)").matches, outlineStyle: styles.outlineStyle, outlineWidth: styles.outlineWidth };
+    });
+    assert(referenceForcedColors.active && referenceForcedColors.outlineStyle === "solid" && referenceForcedColors.outlineWidth !== "0px", "Reference switch forced-colors focus fallback is not rendered.");
+    await page.emulateMedia({ forcedColors: "none" });
+    await page.keyboard.press("Space");
+    assert(!(await referenceSwitch.isChecked()), "Reference switch does not toggle with Space.");
   } finally {
     await browser.close();
   }
