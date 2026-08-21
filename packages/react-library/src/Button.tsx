@@ -12,6 +12,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 function hasVisibleText(node: ReactNode): boolean {
   if (typeof node === "string" || typeof node === "number") return String(node).trim().length > 0;
+  if (Array.isArray(node)) return node.some(hasVisibleText);
   if (!isValidElement<{ children?: ReactNode }>(node)) return false;
   return Children.toArray(node.props.children).some(hasVisibleText);
 }
@@ -36,11 +37,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       aria-labelledby={ariaLabelledBy}
       className={classes}
       data-size={size}
+      data-loading={loading}
       data-variant={variant}
       disabled={isDisabled}
       type={nativeProps.type ?? "button"}
     >
-      {loading ? <span aria-hidden="true" className="sf-button__spinner" /> : null}
+      <span aria-hidden="true" className="sf-button__spinner" />
       {children}
     </button>
   );

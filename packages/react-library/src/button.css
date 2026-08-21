@@ -51,6 +51,7 @@
   }
 }
 .sf-button:disabled { background: var(--sf-color-disabled); border-color: var(--sf-color-disabled); color: var(--sf-color-text-muted); cursor: not-allowed; }
-.sf-button__spinner { animation: sf-button-spin 700ms linear infinite; border: 2px solid currentcolor; border-right-color: transparent; border-radius: 50%; height: 0.875em; width: 0.875em; }
+.sf-button__spinner { animation: sf-button-spin 700ms linear infinite; border: 2px solid currentcolor; border-right-color: transparent; border-radius: 50%; height: 0.875em; visibility: hidden; width: 0.875em; }
+.sf-button[data-loading="true"] .sf-button__spinner { visibility: visible; }
 @keyframes sf-button-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .sf-button, .sf-button__spinner { animation: none; transition: none; } }

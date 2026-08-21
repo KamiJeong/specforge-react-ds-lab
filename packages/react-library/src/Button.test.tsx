@@ -63,6 +63,29 @@ describe("Button", () => {
     expect(screen.getByTestId("icon")).toHaveAttribute("aria-hidden", "true");
   });
 
+  it("recognizes visible text nested in child arrays and fragments", () => {
+    const Icon = () => <svg aria-hidden="true" />;
+    expect(() => render(<Button>{[<Icon key="icon" />, "Save"]}</Button>)).not.toThrow();
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+
+    render(<Button><><Icon />{"Continue"}</></Button>);
+    expect(screen.getByRole("button", { name: "Continue" })).toBeInTheDocument();
+  });
+
+  it("reserves decorative spinner space before loading to prevent width changes", () => {
+    const { rerender } = render(<Button>Save</Button>);
+    const button = screen.getByRole("button", { name: "Save" });
+    expect(button).toHaveAttribute("data-loading", "false");
+    expect(button.querySelector(".sf-button__spinner")).toHaveAttribute("aria-hidden", "true");
+
+    rerender(<Button loading>Save</Button>);
+    expect(screen.getByRole("button", { name: "Save" })).toHaveAttribute("data-loading", "true");
+
+    const styles = readFileSync(resolve(process.cwd(), "src/button.css"), "utf8");
+    expect(styles).toMatch(/\.sf-button__spinner\s*\{[^}]*visibility:\s*hidden/);
+    expect(styles).toMatch(/\.sf-button\[data-loading="true"\]\s+\.sf-button__spinner\s*\{\s*visibility:\s*visible/);
+  });
+
   it("preserves standard native attributes", () => {
     render(<Button data-testid="save" name="intent" type="submit">Save</Button>);
     const button = screen.getByTestId("save");
