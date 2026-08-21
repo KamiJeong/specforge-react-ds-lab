@@ -1,0 +1,29 @@
+:root {
+  --sf-color-action-primary: #155eef;
+  --sf-color-action-primary-hover: #004eeb;
+  --sf-color-action-primary-active: #0040c1;
+  --sf-color-action-on-primary: #ffffff;
+  --sf-color-surface: #ffffff;
+  --sf-color-surface-subtle: #f8fafc;
+  --sf-color-border: #cbd5e1;
+  --sf-color-text: #172033;
+  --sf-color-text-muted: #64748b;
+  --sf-color-disabled: #e2e8f0;
+  --sf-color-focus: #155eef;
+  --sf-space-1: 0.25rem;
+  --sf-space-2: 0.5rem;
+  --sf-space-3: 0.75rem;
+  --sf-space-4: 1rem;
+  --sf-radius-control: 0.5rem;
+  --sf-font-family-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --sf-font-size-sm: 0.8125rem;
+  --sf-font-size-md: 0.875rem;
+  --sf-font-size-lg: 1rem;
+  --sf-font-weight-medium: 600;
+  --sf-line-height-control: 1.25;
+  --sf-focus-ring-width: 0.1875rem;
+  --sf-focus-ring-offset: 0.125rem;
+  --sf-control-height-sm: 2rem;
+  --sf-control-height-md: 2.5rem;
+  --sf-control-height-lg: 3rem;
+}

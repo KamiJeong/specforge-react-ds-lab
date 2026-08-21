@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "issue": 1,
+  "correlation_id": "1",
+  "slug": "react-design-system-foundation-button",
+  "branch": "feature/1-react-design-system-foundation-button",
+  "profile": "component",
+  "current_stage": "ready-pr",
+  "completed_stages": ["spec", "implement", "verify", "eval", "review", "fix"],
+  "blocked_stage": null,
+  "manual_decisions": [
+    {
+      "id": "DECISION-1-001",
+      "question": "May the workflow exceed its two-review-iteration limit for one additional scoped remediation loop to resolve FINDING-1-001, the strict TypeScript declaration CSS-import failure?",
+      "options": [
+        "Authorize one additional scoped fix, followed by required Verify, Eval, and independent Review.",
+        "Stop the workflow with the remaining P1 unresolved."
+      ],
+      "recommended_option": "Authorize one additional scoped fix, followed by required Verify, Eval, and independent Review.",
+      "consequences": [
+        "Authorization permits only remediation of the existing P1 and the profile's full retry gates; it does not change requirements or blocking Evals.",
+        "Stopping leaves the feature ineligible for PR readiness because a P1 finding remains open."
+      ],
+      "blocking_stage": "review",
+      "status": "resolved",
+      "decision": "Authorize one additional scoped fix, followed by required Verify, Eval, and independent Review.",
+      "decided_by": "human:user",
+      "decided_at": "2026-08-20T08:46:16Z"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASSUMPTION-1-001",
+      "decision": "Treat the library-import goal as internal rather than a public npm or relied-upon compatibility contract.",
+      "reason": "Public npm publishing is a stated non-goal.",
+      "evidence": ["Issue #1 Non-Goals", "brief.md ASM-1-001"],
+      "impact": "The selected component profile remains eligible; promote to full if a public compatibility commitment emerges.",
+      "source": "Issue #1",
+      "made_by": "specforge-architect/v1",
+      "made_at": "2026-08-20T07:56:19Z"
+    },
+    {
+      "id": "ASSUMPTION-1-002",
+      "decision": "Choose implementation tooling and exact versions during approved implementation rather than asserting an existing workspace.",
+      "reason": "The repository has no React workspace and no configured verification commands.",
+      "evidence": ["Repository inventory", ".sdd/verification.yaml", "brief.md ASM-1-002"],
+      "impact": "The Implementer must add justified project-native scripts and the Evaluator must observe them before PASS.",
+      "source": "Repository inspection",
+      "made_by": "specforge-architect/v1",
+      "made_at": "2026-08-20T07:56:19Z"
+    },
+    {
+      "id": "ASSUMPTION-1-003",
+      "decision": "Use primary, secondary, and ghost variants plus sm, md, and lg sizes as the reference baseline.",
+      "reason": "The Issue provides visual principles but no variant taxonomy.",
+      "evidence": ["Issue #1 Design Intent", "brief.md ASM-1-003"],
+      "impact": "The implementation and four blocking Evals must cover these documented combinations.",
+      "source": "Issue #1",
+      "made_by": "specforge-architect/v1",
+      "made_at": "2026-08-20T07:56:19Z"
+    },
+    {
+      "id": "ASSUMPTION-1-004",
+      "decision": "Treat Storybook MCP as an installed-tooling capability to configure or explicitly evidence as unsupported.",
+      "reason": "The Issue does not define a package version or remote service contract.",
+      "evidence": ["Issue #1 Tech constraints", "brief.md ASM-1-004"],
+      "impact": "Unsupported MCP capability cannot be silently omitted from EVAL-1-004 evidence.",
+      "source": "Issue #1",
+      "made_by": "specforge-architect/v1",
+      "made_at": "2026-08-20T07:56:19Z"
+    }
+  ],
+  "spec_status": "approved",
+  "eval_design_status": "approved",
+  "analysis_status": "not_applicable",
+  "implementation_status": "complete",
+  "verification_status": "pass",
+  "eval_status": "pass",
+  "review_iteration": 2,
+  "open_findings": [
+    {
+      "id": "FINDING-1-001",
+      "severity": "P1",
+      "class": "MUST_FIX",
+      "title": "Published TypeScript declaration references a missing CSS module",
+      "description": "The emitted Button declaration imports ./button.css but the distributable does not contain that relative CSS file, so a strict TypeScript consumer can fail declaration resolution.",
+      "evidence": ["dist/Button.d.ts imports ./button.css", "dist/button.css is absent after build", "Clean consumer with noUncheckedSideEffectImports reports TS2307"],
+      "affected_requirements": ["REQ-1-001"],
+      "status": "resolved",
+      "resolution": "The distributable now ships dist/button.css and its declaration shim; independent strict clean-consumer TypeScript checking passed.",
+      "reported_by": "specforge-reviewer/v1",
+      "reported_at": "2026-08-20T08:22:57Z"
+    },
+    {
+      "id": "FINDING-1-002",
+      "severity": "P1",
+      "class": "MUST_FIX",
+      "title": "Focus indicator has no forced-colors fallback",
+      "description": "The focus-visible rule lacked a forced-colors fallback, which could leave no focus indicator when author shadows were suppressed.",
+      "evidence": ["packages/react-library/src/button.css forced-colors fallback", "EVIDENCE-1-007 Chromium forced-colors computed-style observation"],
+      "affected_requirements": ["REQ-1-002"],
+      "status": "resolved",
+      "resolution": "A CanvasText outline fallback was added and independently observed under Chromium forced-colors emulation.",
+      "reported_by": "specforge-reviewer/v1",
+      "reported_at": "2026-08-20T08:22:57Z"
+    }
+  ],
+  "convergence_status": "not_applicable",
+  "updated_at": "2026-08-21T00:31:11Z"
+}
