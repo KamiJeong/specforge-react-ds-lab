@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "issue": 4,
+  "correlation_id": "4",
+  "slug": "react-design-system-foundation",
+  "branch": "feature/4-react-design-system-foundation",
+  "profile": "component",
+  "current_stage": "ready-pr",
+  "completed_stages": ["spec", "implement", "verify", "eval", "fix", "review"],
+  "blocked_stage": null,
+  "manual_decisions": [
+    {
+      "id": "DECISION-4-001",
+      "question": "May the workflow perform one additional scoped remediation loop for FINDING-4-003 (preserve native Select size semantics) and FINDING-4-004 (add a discoverable Switch focus-visible Storybook state), followed by Verify, Eval, and independent Review?",
+      "options": [
+        "Authorize one additional scoped fix loop with all required repeat gates.",
+        "Stop the workflow with the two P1 findings unresolved."
+      ],
+      "recommended_option": "Authorize one additional scoped fix loop with all required repeat gates.",
+      "consequences": [
+        "Authorization permits only remediation of these findings and does not alter the approved Brief, Acceptance Criteria, or blocking Evals.",
+        "Stopping leaves Issue #4 ineligible for PR readiness because two P1 findings remain open."
+      ],
+      "blocking_stage": "review",
+      "status": "resolved",
+      "decision": "Authorize one additional scoped fix loop with all required repeat gates.",
+      "decided_by": "human:user",
+      "decided_at": "2026-08-21T04:17:33Z"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "ASSUMPTION-4-001",
+      "decision": "Treat the Issue's named primitives as an internal library extension, not a public npm compatibility commitment.",
+      "reason": "The repository package is private and public npm publishing is a stated non-goal.",
+      "evidence": ["Issue #4 Non-Goals", "packages/react-library/package.json"],
+      "impact": "The explicit component workflow label remains eligible; promote to full if external publication or relied-upon compatibility emerges.",
+      "source": "Issue #4 and repository inspection",
+      "made_by": "specforge-architect/v1",
+      "made_at": "2026-08-21T01:36:16Z"
+    },
+    {
+      "id": "ASSUMPTION-4-002",
+      "decision": "Interpret 'Form' as composable field primitives, not validation, submission, or data-management behavior.",
+      "reason": "The Issue names basic HTML elements but does not define business validation or submission semantics.",
+      "evidence": ["Issue #4 Desired Outcome", "Issue #4 Non-Goals"],
+      "impact": "The scope stays reusable and product-neutral; product-specific validation, submission, persistence, and theming are excluded.",
+      "source": "Issue #4",
+      "made_by": "specforge-architect/v1",
+      "made_at": "2026-08-21T01:36:16Z"
+    }
+  ],
+  "spec_status": "approved",
+  "eval_design_status": "approved",
+  "analysis_status": "not_applicable",
+  "implementation_status": "complete",
+  "verification_status": "pass",
+  "eval_status": "pass",
+  "review_iteration": 2,
+  "open_findings": [
+    {
+      "id": "FINDING-4-001",
+      "severity": "P1",
+      "class": "MUST_FIX",
+      "title": "Field label association can target the wrong control",
+      "description": "Field can preserve a caller-supplied child id while its generated Label htmlFor still targets a different generated id.",
+      "evidence": ["packages/react-library/src/Field.tsx: generated controlId and child id merge", "packages/react-library/src/Primitives.test.tsx: no caller-supplied child-id association case"],
+      "affected_requirements": ["REQ-4-002"],
+      "status": "resolved",
+      "resolution": "A caller-supplied child id now drives the Field Label/help/error association, with a conflicting-id regression test; independently confirmed in re-review.",
+      "reported_by": "specforge-reviewer/v1",
+      "reported_at": "2026-08-21T03:04:07Z"
+    },
+    {
+      "id": "FINDING-4-002",
+      "severity": "P1",
+      "class": "MUST_FIX",
+      "title": "Required Form primitive is absent",
+      "description": "The approved Form/Field requirement is not met because Form is absent from source, exports, documentation, stories, and the package contract.",
+      "evidence": ["specs/4-react-design-system-foundation/brief.md REQ-4-002", "packages/react-library/src/index.ts exports Field but no Form"],
+      "affected_requirements": ["REQ-4-002", "REQ-4-003"],
+      "status": "resolved",
+      "resolution": "A native ref-forwarding Form primitive is exported with documentation, stories, tests, declarations, and clean-consumer package coverage; independently confirmed in re-review.",
+      "reported_by": "specforge-reviewer/v1",
+      "reported_at": "2026-08-21T03:04:07Z"
+    },
+    {
+      "id": "FINDING-4-003",
+      "severity": "P1",
+      "class": "MUST_FIX",
+      "title": "Select removes the native size attribute from its public API",
+      "description": "Select replaces the ordinary native SelectHTMLAttributes size attribute with design-system size values and therefore cannot preserve native multi-row/listbox semantics.",
+      "evidence": ["packages/react-library/src/Select.tsx omits native size and emits data-size", "packages/react-library/README.md says native select props are accepted"],
+      "affected_requirements": ["REQ-4-002"],
+      "status": "resolved",
+      "resolution": "Numeric native size values now reach the select element while preserving token styling; independently confirmed in final review.",
+      "reported_by": "specforge-reviewer/v1",
+      "reported_at": "2026-08-21T03:13:51Z"
+    },
+    {
+      "id": "FINDING-4-004",
+      "severity": "P1",
+      "class": "MUST_FIX",
+      "title": "Switch lacks a discoverable focus-visible Storybook state",
+      "description": "Switch has no focus-visible story even though the approved documentation contract requires representative focus-visible states for interactive primitives.",
+      "evidence": ["packages/react-library/src/Switch.stories.tsx has unchecked, checked, and disabled states only", "packages/react-library/scripts/verify-storybook-browser.mjs has no Switch focus-visible story inventory"],
+      "affected_requirements": ["REQ-4-002", "REQ-4-003"],
+      "status": "resolved",
+      "resolution": "A discoverable visibly focused Switch Storybook state and browser check were added; independently confirmed in final review.",
+      "reported_by": "specforge-reviewer/v1",
+      "reported_at": "2026-08-21T03:13:51Z"
+    }
+  ],
+  "convergence_status": "not_applicable",
+  "updated_at": "2026-08-21T04:27:35Z"
+}
