@@ -1,0 +1,7 @@
+@import "./tokens.css";
+
+.sf-reference-composition { color: var(--sf-color-text); display: grid; font-family: var(--sf-font-family-sans); gap: var(--sf-space-4); margin: 0 auto; max-inline-size: 48rem; padding: var(--sf-space-4); }
+.sf-reference-composition__header { align-items: start; border-bottom: 1px solid var(--sf-color-border); display: flex; gap: var(--sf-space-3); justify-content: space-between; padding-bottom: var(--sf-space-3); }
+.sf-reference-composition section { display: grid; gap: var(--sf-space-3); }
+.sf-reference-composition__empty { background: var(--sf-color-surface-subtle); border-left: 3px solid var(--sf-color-border); padding: var(--sf-space-3); }
+@media (max-width: 32rem) { .sf-reference-composition__header { align-items: stretch; flex-direction: column; } .sf-reference-composition__header .sf-button { width: 100%; } }
