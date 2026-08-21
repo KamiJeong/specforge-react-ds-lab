@@ -385,3 +385,21 @@ not close findings, change state, or synchronize labels.
 Created [PR #3](https://github.com/KamiJeong/specforge-react-ds-lab/pull/3)
 against `main` from `feature/1-react-design-system-foundation-button`; its body
 includes `Closes #1` and the compact-profile validation, Eval, and Review record.
+
+## Post-PR Review Feedback
+
+At commit `e2be8abb7f9aa64d90c9a3817fc732b018e0e72b`, two PR review threads were
+addressed without changing the approved component contract.
+
+- The visible-label guard now traverses child arrays recursively, so composed
+  content such as an aria-hidden icon plus text is accepted while truly
+  icon-only content still requires an explicit accessible name. Regression tests
+  cover array and Fragment-contained text.
+- The spinner is always present as an aria-hidden flex child and is hidden with
+  `visibility: hidden` until loading. It therefore reserves the spinner and
+  gap space before loading and avoids an intrinsic-width jump. Regression tests
+  cover the DOM and CSS layout-reservation contract.
+
+Observed after the changes: `bun run typecheck`, `bun run test` (11 tests),
+`bun run build`, and the strict external-consumer `test:package-contract` all
+exited successfully. The review threads are replied to and resolved on PR #3.
